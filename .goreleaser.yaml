@@ -1,0 +1,54 @@
+version: 2
+
+project_name: nccli
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: nccli
+    main: ./cmd/nccli
+    binary: nccli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - >-
+        -s -w
+        -X github.com/turushan/nccli/internal/buildinfo.version={{.Version}}
+        -X github.com/turushan/nccli/internal/buildinfo.commit={{.Commit}}
+        -X github.com/turushan/nccli/internal/buildinfo.builtAt={{.Date}}
+
+archives:
+  - id: nccli
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  use: github-native
+
+release:
+  draft: true
+
