@@ -294,7 +294,9 @@ func readAPIParamsFile(path string, stdin io.Reader) (map[string]string, error) 
 		if err != nil {
 			return nil, failure.Wrap("params_file_read_failed", exitcode.Usage, fmt.Sprintf("open parameters file: %v", err), err)
 		}
-		defer file.Close()
+		defer func() {
+			_ = file.Close()
+		}()
 		reader = file
 	}
 	decoder := json.NewDecoder(bufio.NewReader(reader))
