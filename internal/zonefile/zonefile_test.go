@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/turushan/nccli/internal/provider"
+	"github.com/turushan/cheep/internal/provider"
 )
 
 func TestLoadNormalizesAndSortsZone(t *testing.T) {

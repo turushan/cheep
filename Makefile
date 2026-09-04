@@ -4,7 +4,7 @@ SHELL := /bin/sh
 
 build:
 	mkdir -p bin
-	go build -trimpath -o bin/nccli ./cmd/nccli
+	go build -trimpath -o bin/cheep ./cmd/cheep
 
 check: fmt-check
 	go mod verify

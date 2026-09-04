@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/turushan/nccli/internal/buildinfo"
-	"github.com/turushan/nccli/internal/exitcode"
-	"github.com/turushan/nccli/internal/output"
+	"github.com/turushan/cheep/internal/buildinfo"
+	"github.com/turushan/cheep/internal/exitcode"
+	"github.com/turushan/cheep/internal/output"
 )
 
 func TestVersionHumanOutput(t *testing.T) {
@@ -18,7 +18,7 @@ func TestVersionHumanOutput(t *testing.T) {
 	if status != exitcode.Success {
 		t.Fatalf("status = %d, want %d; stderr: %s", status, exitcode.Success, stderr)
 	}
-	if stdout != "nccli 1.2.3 (abc123)\n" {
+	if stdout != "cheep 1.2.3 (abc123)\n" {
 		t.Fatalf("stdout = %q", stdout)
 	}
 	if stderr != "" {
@@ -91,7 +91,7 @@ func TestSchemaIsExplicitlyExperimentalAndUsesEnvelopeNames(t *testing.T) {
 	}
 	foundDNSApply := false
 	for _, command := range schema.Commands {
-		if strings.HasPrefix(command.Name, "nccli.") || strings.HasPrefix(command.Name, "completion") {
+		if strings.HasPrefix(command.Name, "cheep.") || strings.HasPrefix(command.Name, "completion") {
 			t.Fatalf("unexpected schema command name: %q", command.Name)
 		}
 		if command.Name == "dns.apply" {

@@ -10,14 +10,14 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/turushan/nccli/internal/buildinfo"
-	"github.com/turushan/nccli/internal/config"
-	"github.com/turushan/nccli/internal/exitcode"
-	"github.com/turushan/nccli/internal/failure"
-	namecheapapi "github.com/turushan/nccli/internal/namecheap"
-	"github.com/turushan/nccli/internal/output"
-	"github.com/turushan/nccli/internal/provider"
-	"github.com/turushan/nccli/internal/secrets"
+	"github.com/turushan/cheep/internal/buildinfo"
+	"github.com/turushan/cheep/internal/config"
+	"github.com/turushan/cheep/internal/exitcode"
+	"github.com/turushan/cheep/internal/failure"
+	namecheapapi "github.com/turushan/cheep/internal/namecheap"
+	"github.com/turushan/cheep/internal/output"
+	"github.com/turushan/cheep/internal/provider"
+	"github.com/turushan/cheep/internal/secrets"
 )
 
 // Options provides process dependencies without global state.
@@ -120,7 +120,7 @@ func newRoot(options Options) (*cobra.Command, *state) {
 	}
 
 	root := &cobra.Command{
-		Use:           "nccli",
+		Use:           "cheep",
 		Short:         "The safe, unofficial Namecheap CLI",
 		SilenceErrors: true,
 		SilenceUsage:  true,

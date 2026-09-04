@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/turushan/nccli/internal/config"
-	"github.com/turushan/nccli/internal/exitcode"
-	"github.com/turushan/nccli/internal/failure"
-	"github.com/turushan/nccli/internal/secrets"
+	"github.com/turushan/cheep/internal/config"
+	"github.com/turushan/cheep/internal/exitcode"
+	"github.com/turushan/cheep/internal/failure"
+	"github.com/turushan/cheep/internal/secrets"
 	"golang.org/x/term"
 )
 
@@ -170,7 +170,7 @@ func newAuthConfigureCommand(state *state) *cobra.Command {
 					_, err := fmt.Fprintln(w, "Stored the API key in the operating system keychain.")
 					return err
 				}
-				_, err := fmt.Fprintln(w, "No API key was stored. Use --api-key-stdin or an NCCLI_API_KEY environment variable.")
+				_, err := fmt.Fprintln(w, "No API key was stored. Use --api-key-stdin or an CHEEP_API_KEY environment variable.")
 				return err
 			})
 		},

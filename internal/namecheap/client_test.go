@@ -12,8 +12,8 @@ import (
 	"testing"
 
 	sdk "github.com/namecheap/go-namecheap-sdk/v2/namecheap"
-	"github.com/turushan/nccli/internal/config"
-	"github.com/turushan/nccli/internal/provider"
+	"github.com/turushan/cheep/internal/config"
+	"github.com/turushan/cheep/internal/provider"
 )
 
 type roundTripFunc func(*http.Request) (*http.Response, error)

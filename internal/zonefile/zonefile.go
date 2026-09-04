@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/turushan/nccli/internal/fsutil"
-	"github.com/turushan/nccli/internal/provider"
+	"github.com/turushan/cheep/internal/fsutil"
+	"github.com/turushan/cheep/internal/provider"
 	"go.yaml.in/yaml/v3"
 )
 

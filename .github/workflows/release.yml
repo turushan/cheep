@@ -36,8 +36,8 @@ jobs:
       - name: Smoke test Linux archive
         shell: bash
         run: |
-          archive="$(find dist -maxdepth 1 -name 'nccli_*_linux_amd64.tar.gz' -print -quit)"
+          archive="$(find dist -maxdepth 1 -name 'cheep_*_linux_amd64.tar.gz' -print -quit)"
           test -n "$archive"
           mkdir dist/smoke
           tar -xzf "$archive" -C dist/smoke
-          dist/smoke/nccli version
+          dist/smoke/cheep version

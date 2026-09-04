@@ -10,10 +10,10 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"github.com/turushan/nccli/internal/exitcode"
-	"github.com/turushan/nccli/internal/failure"
-	"github.com/turushan/nccli/internal/provider"
-	"github.com/turushan/nccli/internal/zonefile"
+	"github.com/turushan/cheep/internal/exitcode"
+	"github.com/turushan/cheep/internal/failure"
+	"github.com/turushan/cheep/internal/provider"
+	"github.com/turushan/cheep/internal/zonefile"
 )
 
 type exportResult struct {
@@ -247,7 +247,7 @@ func newDNSApplyCommand(state *state, name string, description string) *cobra.Co
 			if err != nil {
 				var providerError *provider.Error
 				if errors.As(err, &providerError) && providerError.Kind == provider.ErrorOutcomeUnknown {
-					message := fmt.Sprintf("DNS update outcome is unknown. Run nccli dns list %s and inspect snapshot %s before retrying: %s", domain, snapshotPath, providerError.Message)
+					message := fmt.Sprintf("DNS update outcome is unknown. Run cheep dns list %s and inspect snapshot %s before retrying: %s", domain, snapshotPath, providerError.Message)
 					return failure.Wrap("dns_outcome_unknown", exitcode.Conflict, message, err)
 				}
 				return mapProviderError(err)

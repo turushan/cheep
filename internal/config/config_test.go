@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/turushan/nccli/internal/secrets"
+	"github.com/turushan/cheep/internal/secrets"
 )
 
 func TestResolveDefaultsToSandboxAndUsesKeychain(t *testing.T) {
@@ -57,11 +57,11 @@ func TestEnvironmentOverridesProfileAndKeychain(t *testing.T) {
 	t.Parallel()
 
 	values := map[string]string{
-		"NCCLI_PROFILE":     "ci",
-		"NCCLI_API_USER":    "environment-user",
-		"NCCLI_API_KEY":     "environment-key",
-		"NCCLI_CLIENT_IP":   "1.1.1.1",
-		"NCCLI_ENVIRONMENT": "production",
+		"CHEEP_PROFILE":     "ci",
+		"CHEEP_API_USER":    "environment-user",
+		"CHEEP_API_KEY":     "environment-key",
+		"CHEEP_CLIENT_IP":   "1.1.1.1",
+		"CHEEP_ENVIRONMENT": "production",
 	}
 	resolver := Resolver{
 		Path: filepath.Join(t.TempDir(), "missing.toml"),
@@ -77,7 +77,7 @@ func TestEnvironmentOverridesProfileAndKeychain(t *testing.T) {
 	if profile.Name != "ci" || profile.APIUser != "environment-user" || profile.Environment != Production {
 		t.Fatalf("unexpected profile: %+v", profile.Public())
 	}
-	if profile.APIKeySource != "NCCLI_API_KEY" {
+	if profile.APIKeySource != "CHEEP_API_KEY" {
 		t.Fatalf("API key source = %q", profile.APIKeySource)
 	}
 }

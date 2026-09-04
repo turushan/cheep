@@ -6,7 +6,7 @@ import (
 	keyring "github.com/zalando/go-keyring"
 )
 
-const serviceName = "nccli"
+const serviceName = "cheep"
 
 var ErrNotFound = errors.New("secret not found")
 

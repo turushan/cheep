@@ -6,7 +6,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"github.com/turushan/nccli/internal/provider"
+	"github.com/turushan/cheep/internal/provider"
 )
 
 func newTLDsCommand(state *state) *cobra.Command {

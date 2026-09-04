@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/turushan/nccli/internal/exitcode"
-	"github.com/turushan/nccli/internal/failure"
-	"github.com/turushan/nccli/internal/provider"
+	"github.com/turushan/cheep/internal/exitcode"
+	"github.com/turushan/cheep/internal/failure"
+	"github.com/turushan/cheep/internal/provider"
 )
 
 func newAccountCommand(state *state) *cobra.Command {

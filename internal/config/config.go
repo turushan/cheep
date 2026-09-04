@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/pelletier/go-toml/v2"
-	"github.com/turushan/nccli/internal/fsutil"
-	"github.com/turushan/nccli/internal/secrets"
+	"github.com/turushan/cheep/internal/fsutil"
+	"github.com/turushan/cheep/internal/secrets"
 )
 
 const DefaultProfile = "sandbox"
@@ -103,14 +103,14 @@ type Resolver struct {
 
 // DefaultPath returns the platform configuration path.
 func DefaultPath(getenv func(string) string) (string, error) {
-	if path := strings.TrimSpace(getenv("NCCLI_CONFIG")); path != "" {
+	if path := strings.TrimSpace(getenv("CHEEP_CONFIG")); path != "" {
 		return filepath.Clean(path), nil
 	}
 	directory, err := os.UserConfigDir()
 	if err != nil {
 		return "", fmt.Errorf("locate user configuration directory: %w", err)
 	}
-	return filepath.Join(directory, "nccli", "config.toml"), nil
+	return filepath.Join(directory, "cheep", "config.toml"), nil
 }
 
 // Resolve returns a validated profile and obtains its API key from the environment or keychain.
@@ -125,7 +125,7 @@ func (r Resolver) Resolve(profileOverride string, environmentOverride string) (P
 
 	environmentText := firstNonEmpty(
 		environmentOverride,
-		r.getenv("NCCLI_ENVIRONMENT"),
+		r.getenv("CHEEP_ENVIRONMENT"),
 		r.getenv("NAMECHEAP_ENVIRONMENT"),
 		string(record.Environment),
 		legacyEnvironment(r.getenv("NAMECHEAP_USE_SANDBOX")),
@@ -133,9 +133,9 @@ func (r Resolver) Resolve(profileOverride string, environmentOverride string) (P
 	)
 	profile := Profile{
 		Name:        name,
-		APIUser:     firstNonEmpty(r.getenv("NCCLI_API_USER"), r.getenv("NAMECHEAP_API_USER"), record.APIUser),
-		Username:    firstNonEmpty(r.getenv("NCCLI_USERNAME"), r.getenv("NAMECHEAP_USERNAME"), r.getenv("NAMECHEAP_USER_NAME"), record.Username),
-		ClientIP:    firstNonEmpty(r.getenv("NCCLI_CLIENT_IP"), r.getenv("NAMECHEAP_CLIENT_IP"), record.ClientIP),
+		APIUser:     firstNonEmpty(r.getenv("CHEEP_API_USER"), r.getenv("NAMECHEAP_API_USER"), record.APIUser),
+		Username:    firstNonEmpty(r.getenv("CHEEP_USERNAME"), r.getenv("NAMECHEAP_USERNAME"), r.getenv("NAMECHEAP_USER_NAME"), record.Username),
+		ClientIP:    firstNonEmpty(r.getenv("CHEEP_CLIENT_IP"), r.getenv("NAMECHEAP_CLIENT_IP"), record.ClientIP),
 		Environment: Environment(strings.ToLower(environmentText)),
 		ConfigPath:  r.Path,
 	}
@@ -165,7 +165,7 @@ func (r Resolver) SelectedProfileName(profileOverride string) (string, error) {
 func (r Resolver) selectedProfileName(profileOverride string, file File) string {
 	return firstNonEmpty(
 		profileOverride,
-		r.getenv("NCCLI_PROFILE"),
+		r.getenv("CHEEP_PROFILE"),
 		r.getenv("NAMECHEAP_PROFILE"),
 		file.DefaultProfile,
 		DefaultProfile,
@@ -235,8 +235,8 @@ func validatedProfileRecord(name string, record ProfileRecord) (ProfileRecord, e
 }
 
 func (r Resolver) resolveAPIKey(profile string) (string, string, error) {
-	if value := strings.TrimSpace(r.getenv("NCCLI_API_KEY")); value != "" {
-		return value, "NCCLI_API_KEY", nil
+	if value := strings.TrimSpace(r.getenv("CHEEP_API_KEY")); value != "" {
+		return value, "CHEEP_API_KEY", nil
 	}
 	if value := strings.TrimSpace(r.getenv("NAMECHEAP_API_KEY")); value != "" {
 		return value, "NAMECHEAP_API_KEY", nil
@@ -272,7 +272,7 @@ func validateResolved(profile Profile) error {
 		return err
 	}
 	if profile.APIKey == "" {
-		return errors.New("API key is missing; set NCCLI_API_KEY or store it with auth configure --api-key-stdin")
+		return errors.New("API key is missing; set CHEEP_API_KEY or store it with auth configure --api-key-stdin")
 	}
 	return nil
 }

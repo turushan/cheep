@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/turushan/nccli/internal/output"
+	"github.com/turushan/cheep/internal/output"
 )
 
 type commandSchema struct {

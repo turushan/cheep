@@ -1,15 +1,15 @@
 version: 2
 
-project_name: nccli
+project_name: cheep
 
 before:
   hooks:
     - go mod verify
 
 builds:
-  - id: nccli
-    main: ./cmd/nccli
-    binary: nccli
+  - id: cheep
+    main: ./cmd/cheep
+    binary: cheep
     env:
       - CGO_ENABLED=0
     goos:
@@ -24,11 +24,11 @@ builds:
     ldflags:
       - >-
         -s -w
-        -X github.com/turushan/nccli/internal/buildinfo.version={{.Version}}
-        -X github.com/turushan/nccli/internal/buildinfo.commit={{.Commit}}
+        -X github.com/turushan/cheep/internal/buildinfo.version={{.Version}}
+        -X github.com/turushan/cheep/internal/buildinfo.commit={{.Commit}}
 
 archives:
-  - id: nccli
+  - id: cheep
     formats:
       - tar.gz
     format_overrides:
@@ -51,4 +51,4 @@ release:
   draft: true
   github:
     owner: turushan
-    name: nccli
+    name: cheep

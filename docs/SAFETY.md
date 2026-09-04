@@ -20,15 +20,15 @@ Registration, renewal, transfer, reactivation, privacy, and certificate purchase
 - Exact target confirmation
 - A visible environment label
 
-NC CLI never retries an ambiguous charge-bearing request.
+Cheep never retries an ambiguous charge-bearing request.
 
 ## DNS
 
-Namecheap's host update endpoint replaces the complete zone. NC CLI therefore reads the current
+Namecheap's host update endpoint replaces the complete zone. Cheep therefore reads the current
 zone, writes a local snapshot, calculates a record-level plan, checks for concurrent changes,
 applies the complete intended zone once, and reads it back for verification.
 
-NC CLI never retries a DNS write whose outcome may be unknown. It names the pre-change snapshot
+Cheep never retries a DNS write whose outcome may be unknown. It names the pre-change snapshot
 and requires the operator to read and reconcile the live zone before trying another change.
 
 An empty selector never means every record. A plan that would empty a zone requires a separate,

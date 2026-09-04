@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/turushan/nccli/internal/buildinfo"
-	"github.com/turushan/nccli/internal/exitcode"
-	"github.com/turushan/nccli/internal/secrets"
+	"github.com/turushan/cheep/internal/buildinfo"
+	"github.com/turushan/cheep/internal/exitcode"
+	"github.com/turushan/cheep/internal/secrets"
 )
 
 type transactionalSecretStore struct {

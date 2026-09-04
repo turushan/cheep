@@ -44,6 +44,6 @@ and prints a plan without applying it.
 
 ## Experimental command inventory
 
-`nccli schema --json` reports the current command and local-flag inventory as
+`cheep schema --json` reports the current command and local-flag inventory as
 `experimental-v0`. It is not the stable automation contract yet. Positional arguments, inherited
 flags, output types, and safety requirements will be added before its first stable version.

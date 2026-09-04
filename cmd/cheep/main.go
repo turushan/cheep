@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/turushan/nccli/internal/buildinfo"
-	"github.com/turushan/nccli/internal/cli"
+	"github.com/turushan/cheep/internal/buildinfo"
+	"github.com/turushan/cheep/internal/cli"
 )
 
 func main() {

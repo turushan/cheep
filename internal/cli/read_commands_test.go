@@ -9,12 +9,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/turushan/nccli/internal/buildinfo"
-	"github.com/turushan/nccli/internal/config"
-	"github.com/turushan/nccli/internal/exitcode"
-	"github.com/turushan/nccli/internal/output"
-	"github.com/turushan/nccli/internal/provider"
-	"github.com/turushan/nccli/internal/secrets"
+	"github.com/turushan/cheep/internal/buildinfo"
+	"github.com/turushan/cheep/internal/config"
+	"github.com/turushan/cheep/internal/exitcode"
+	"github.com/turushan/cheep/internal/output"
+	"github.com/turushan/cheep/internal/provider"
+	"github.com/turushan/cheep/internal/secrets"
 )
 
 type fakeFactory struct {
@@ -479,10 +479,10 @@ func writeZoneInput(t *testing.T, empty bool) string {
 func authenticatedOptions(t *testing.T, reader provider.Service) (Options, *strings.Builder, *strings.Builder) {
 	t.Helper()
 	values := map[string]string{
-		"NCCLI_API_USER":    "maker",
-		"NCCLI_API_KEY":     "test-key",
-		"NCCLI_CLIENT_IP":   "8.8.8.8",
-		"NCCLI_ENVIRONMENT": "sandbox",
+		"CHEEP_API_USER":    "maker",
+		"CHEEP_API_KEY":     "test-key",
+		"CHEEP_CLIENT_IP":   "8.8.8.8",
+		"CHEEP_ENVIRONMENT": "sandbox",
 	}
 	var resolved config.Profile
 	var stdout strings.Builder

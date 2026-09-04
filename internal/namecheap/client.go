@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	sdk "github.com/namecheap/go-namecheap-sdk/v2/namecheap"
-	"github.com/turushan/nccli/internal/config"
-	"github.com/turushan/nccli/internal/provider"
+	"github.com/turushan/cheep/internal/config"
+	"github.com/turushan/cheep/internal/provider"
 )
 
 const checkBatchSize = 50
@@ -49,7 +49,7 @@ func (f Factory) New(profile config.Profile) provider.Service {
 		ApiKey:     profile.APIKey,
 		ClientIp:   profile.ClientIP,
 		UseSandbox: profile.Environment == config.Sandbox,
-		UserAgent:  "nccli/" + f.Version,
+		UserAgent:  "cheep/" + f.Version,
 		HTTPClient: f.HTTPClient,
 		Transport:  f.Transport,
 	}
@@ -60,7 +60,7 @@ func (f Factory) New(profile config.Profile) provider.Service {
 	return &Client{sdk: client, writer: writer, apiKey: profile.APIKey}
 }
 
-// Client translates SDK models into NC CLI's stable internal models.
+// Client translates SDK models into Cheep's stable internal models.
 type Client struct {
 	sdk    *sdk.Client
 	writer *sdk.Client

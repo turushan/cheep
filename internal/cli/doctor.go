@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/turushan/nccli/internal/config"
+	"github.com/turushan/cheep/internal/config"
 )
 
 type doctorResult struct {
