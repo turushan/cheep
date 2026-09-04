@@ -170,7 +170,7 @@ func newAuthConfigureCommand(state *state) *cobra.Command {
 					_, err := fmt.Fprintln(w, "Stored the API key in the operating system keychain.")
 					return err
 				}
-				_, err := fmt.Fprintln(w, "No API key was stored. Use --api-key-stdin or an CHEEP_API_KEY environment variable.")
+				_, err := fmt.Fprintln(w, "No API key was stored. Use --api-key-stdin or a CHEEP_API_KEY environment variable.")
 				return err
 			})
 		},
