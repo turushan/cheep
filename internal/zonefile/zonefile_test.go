@@ -3,6 +3,7 @@ package zonefile
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -67,7 +68,8 @@ func TestSnapshotUsesPrivateFileAndDeterministicName(t *testing.T) {
 	if err != nil {
 		t.Fatalf("stat snapshot: %v", err)
 	}
-	if got := info.Mode().Perm(); got != 0o600 {
+	if runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
+		got := info.Mode().Perm()
 		t.Fatalf("snapshot mode = %o, want 600", got)
 	}
 }

@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -97,7 +98,8 @@ func TestSaveProfileUsesPrivateFileMode(t *testing.T) {
 	if err != nil {
 		t.Fatalf("stat config: %v", err)
 	}
-	if got := info.Mode().Perm(); got != 0o600 {
+	if runtime.GOOS != "windows" && info.Mode().Perm() != 0o600 {
+		got := info.Mode().Perm()
 		t.Fatalf("config mode = %o, want 600", got)
 	}
 }
