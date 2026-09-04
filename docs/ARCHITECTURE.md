@@ -44,20 +44,15 @@ remain available through `go install`.
 
 ## Website
 
-The `cheep.sh` website belongs in `website/` in the same public repository as the CLI. The Go module
-stays at the repository root. The website keeps its own Node package, tests, Wrangler configuration,
-and deployment workflow inside that directory.
-
-Repository membership does not imply artifact membership. GoReleaser and Homebrew distribute only
-the compiled `cheep` binary, `LICENSE`, and `README.md`. The website source is deployed only by its
-Cloudflare workflow and is never included in CLI archives or Homebrew installations.
+The `cheep.sh` website has an independent codebase and deployment lifecycle. This repository owns
+only the open source CLI, its documentation, and its release artifacts. GoReleaser and Homebrew
+distribute only the compiled `cheep` binary, `LICENSE`, and `README.md`.
 
 The first website should be a static documentation and landing site deployed through a Cloudflare
 Worker with static assets. It should explain installation, authentication, safety guarantees,
 commands, and the independent-project disclaimer. It must never receive or process Namecheap
 credentials.
 
-One repository gives Cheep one issue tracker, one contributor community, one star count, and docs
-that can change in the same pull request as the commands they describe. A separate website
-repository becomes justified only if the site develops an independent product lifecycle or a
-stateful backend.
+The separate boundary lets the website add hosted checks, sponsor integrations, or other server
+logic without adding that runtime or its dependencies to the CLI. Any future communication between
+the two products must use an explicit, versioned interface.
