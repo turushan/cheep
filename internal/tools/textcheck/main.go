@@ -38,7 +38,6 @@ func main() {
 		if err != nil {
 			return err
 		}
-		defer file.Close()
 		scanner := bufio.NewScanner(file)
 		line := 0
 		for scanner.Scan() {
@@ -48,7 +47,12 @@ func main() {
 				failed = true
 			}
 		}
-		return scanner.Err()
+		scanErr := scanner.Err()
+		closeErr := file.Close()
+		if scanErr != nil {
+			return scanErr
+		}
+		return closeErr
 	})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "text check failed: %v\n", err)

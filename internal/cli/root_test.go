@@ -81,6 +81,28 @@ func TestJSONErrorUsesStderr(t *testing.T) {
 	}
 }
 
+func TestSchemaIsExplicitlyExperimentalAndUsesEnvelopeNames(t *testing.T) {
+	t.Parallel()
+
+	root, _ := newRoot(Options{})
+	schema := buildSchema(root)
+	if schema.Version != "experimental-v0" || !schema.Experimental {
+		t.Fatalf("unexpected schema metadata: %+v", schema)
+	}
+	foundDNSApply := false
+	for _, command := range schema.Commands {
+		if strings.HasPrefix(command.Name, "nccli.") || strings.HasPrefix(command.Name, "completion") {
+			t.Fatalf("unexpected schema command name: %q", command.Name)
+		}
+		if command.Name == "dns.apply" {
+			foundDNSApply = true
+		}
+	}
+	if !foundDNSApply {
+		t.Fatal("schema did not include dns.apply")
+	}
+}
+
 func run(t *testing.T, args ...string) (int, string, string) {
 	t.Helper()
 

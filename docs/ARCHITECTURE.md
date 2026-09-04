@@ -16,6 +16,10 @@ Non-secret profile data belongs in the platform configuration directory. API key
 operating-system keychain. Environment variables support CI and other headless environments. NC CLI
 never accepts an API key as a command argument.
 
+The default file uses the platform configuration directory returned by Go. This normally means
+`~/Library/Application Support/nccli/config.toml` on macOS and `~/.config/nccli/config.toml` on
+Linux. The file is written atomically with mode `600` on systems that support Unix file modes.
+
 The precedence order is:
 
 1. Explicit non-secret command flags
@@ -37,4 +41,3 @@ uses stdout. Diagnostics and errors use stderr. See [AUTOMATION.md](AUTOMATION.m
 GitHub Releases are the canonical artifact source. GoReleaser builds static executables for macOS,
 Linux, and Windows. Homebrew is the primary installation channel after public launch. Source builds
 remain available through `go install`.
-

@@ -4,8 +4,7 @@ project_name: nccli
 
 before:
   hooks:
-    - go mod tidy
-    - go test ./...
+    - go mod verify
 
 builds:
   - id: nccli
@@ -27,7 +26,6 @@ builds:
         -s -w
         -X github.com/turushan/nccli/internal/buildinfo.version={{.Version}}
         -X github.com/turushan/nccli/internal/buildinfo.commit={{.Commit}}
-        -X github.com/turushan/nccli/internal/buildinfo.builtAt={{.Date}}
 
 archives:
   - id: nccli
@@ -51,4 +49,6 @@ changelog:
 
 release:
   draft: true
-
+  github:
+    owner: turushan
+    name: nccli

@@ -34,6 +34,7 @@ of a versioned field requires a new schema version.
 | 6 | Concurrent change or state conflict |
 | 7 | Safety policy refused the operation |
 | 8 | Price or spending limit refused the operation |
+| 130 | Interrupted by the operator |
 
 ## Non-interactive execution
 
@@ -41,3 +42,8 @@ of a versioned field requires a new schema version.
 confirmation flags are present. `--readonly` blocks every remote mutation. `--dry-run` calculates
 and prints a plan without applying it.
 
+## Experimental command inventory
+
+`nccli schema --json` reports the current command and local-flag inventory as
+`experimental-v0`. It is not the stable automation contract yet. Positional arguments, inherited
+flags, output types, and safety requirements will be added before its first stable version.

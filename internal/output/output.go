@@ -19,7 +19,8 @@ type Envelope struct {
 	SchemaVersion string   `json:"schema_version"`
 	Command       string   `json:"command"`
 	OK            bool     `json:"ok"`
-	Data          any      `json:"data,omitempty"`
+	Data          any      `json:"data"`
+	Meta          any      `json:"meta,omitempty"`
 	Error         *Problem `json:"error,omitempty"`
 }
 
@@ -32,12 +33,18 @@ type Printer struct {
 
 // Data renders a successful command result.
 func (p Printer) Data(command string, data any, human func(io.Writer) error) error {
+	return p.DataWithMeta(command, data, nil, human)
+}
+
+// DataWithMeta renders a successful result with non-secret execution context.
+func (p Printer) DataWithMeta(command string, data any, meta any, human func(io.Writer) error) error {
 	if p.JSON {
 		return writeJSON(p.Stdout, Envelope{
 			SchemaVersion: SchemaVersion,
 			Command:       command,
 			OK:            true,
 			Data:          data,
+			Meta:          meta,
 		})
 	}
 	return human(p.Stdout)

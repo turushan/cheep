@@ -25,14 +25,15 @@ type flagSchema struct {
 }
 
 type schemaData struct {
-	Version  string          `json:"version"`
-	Commands []commandSchema `json:"commands"`
+	Version      string          `json:"version"`
+	Experimental bool            `json:"experimental"`
+	Commands     []commandSchema `json:"commands"`
 }
 
 func newSchemaCommand(root *cobra.Command, state *state) *cobra.Command {
 	return &cobra.Command{
 		Use:   "schema",
-		Short: "Print the machine-readable command contract",
+		Short: "Print the experimental machine-readable command inventory",
 		Args: func(_ *cobra.Command, args []string) error {
 			return requireNoArgs(args)
 		},
@@ -55,9 +56,9 @@ func buildSchema(root *cobra.Command) schemaData {
 	commands := make([]commandSchema, 0)
 	var walk func(*cobra.Command)
 	walk = func(command *cobra.Command) {
-		if command != root && !command.Hidden {
+		if command != root && !command.Hidden && !isCompletionCommand(command) {
 			item := commandSchema{
-				Name:        strings.ReplaceAll(command.CommandPath(), " ", "."),
+				Name:        schemaCommandName(root, command),
 				Description: command.Short,
 			}
 			command.NonInheritedFlags().VisitAll(func(flag *pflag.Flag) {
@@ -77,5 +78,19 @@ func buildSchema(root *cobra.Command) schemaData {
 	}
 	walk(root)
 	sort.Slice(commands, func(i, j int) bool { return commands[i].Name < commands[j].Name })
-	return schemaData{Version: output.SchemaVersion, Commands: commands}
+	return schemaData{Version: "experimental-v0", Experimental: true, Commands: commands}
+}
+
+func schemaCommandName(root *cobra.Command, command *cobra.Command) string {
+	name := strings.TrimSpace(strings.TrimPrefix(command.CommandPath(), root.CommandPath()))
+	return strings.ReplaceAll(name, " ", ".")
+}
+
+func isCompletionCommand(command *cobra.Command) bool {
+	for current := command; current != nil; current = current.Parent() {
+		if current.Name() == "completion" {
+			return true
+		}
+	}
+	return false
 }

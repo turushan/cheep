@@ -1,0 +1,13 @@
+version: 1
+domain: example.com
+email_type: NONE
+namecheap_dns: true
+records:
+  - host: "@"
+    type: A
+    value: 192.0.2.10
+    ttl: 300
+  - host: www
+    type: CNAME
+    value: example.com
+    ttl: 300

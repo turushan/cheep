@@ -53,4 +53,7 @@ func TestJSONFailureUsesStderrOnly(t *testing.T) {
 	if envelope.OK || envelope.Error == nil || envelope.Error.Code != "test_error" {
 		t.Fatalf("unexpected envelope: %+v", envelope)
 	}
+	if !bytes.Contains(stderr.Bytes(), []byte(`"data":null`)) {
+		t.Fatalf("failure envelope omitted stable data field: %s", stderr.String())
+	}
 }

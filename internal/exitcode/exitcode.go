@@ -10,4 +10,5 @@ const (
 	Conflict       = 6
 	Safety         = 7
 	Price          = 8
+	Interrupted    = 130
 )
