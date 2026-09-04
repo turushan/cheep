@@ -169,6 +169,7 @@ func newRoot(options Options) (*cobra.Command, *state) {
 	root.AddCommand(newAccountCommand(state))
 	root.AddCommand(newTLDsCommand(state))
 	root.AddCommand(newDNSCommand(state))
+	root.AddCommand(newAPICommand(state))
 
 	return root, state
 }

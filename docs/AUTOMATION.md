@@ -42,6 +42,10 @@ of a versioned field requires a new schema version.
 confirmation flags are present. `--readonly` blocks every remote mutation. `--dry-run` calculates
 and prints a plan without applying it.
 
+Use `cheep api methods --json` to discover the complete Namecheap method catalog. Generic API
+responses preserve provider XML as ordered element trees so automation never loses repeated child
+elements or attributes. Use `--secret-param NAME=ENV_VAR` for sensitive method parameters.
+
 ## Experimental command inventory
 
 `cheep schema --json` reports the current command and local-flag inventory as

@@ -13,7 +13,8 @@ The presence of production credentials does not authorize production use.
 
 ## Money
 
-Registration, renewal, transfer, reactivation, privacy, and certificate purchases require:
+Purpose-built registration, renewal, transfer, reactivation, privacy, and certificate purchase
+commands will require:
 
 - A fresh exact price from Namecheap
 - A matching `--max-price`
@@ -21,6 +22,14 @@ Registration, renewal, transfer, reactivation, privacy, and certificate purchase
 - A visible environment label
 
 Cheep never retries an ambiguous charge-bearing request.
+
+The complete `cheep api` surface is lower-level. Every mutation requires `--yes`, every production
+mutation requires `--production`, and every catalog method that can spend funds requires
+`--accept-charge`. The operator must request current Namecheap pricing before accepting a charge.
+The generic layer cannot infer a trustworthy final price from arbitrary method parameters.
+
+`--dry-run` sends no request and prints recognized secrets as `[REDACTED]`. `--readonly` refuses all
+catalog methods marked as mutations.
 
 ## DNS
 
@@ -37,5 +46,6 @@ specific confirmation.
 ## Secrets
 
 API keys use the operating-system keychain by default. Environment variables support headless
-automation. Secrets never appear in process arguments, URLs, output, debug logs, errors, snapshots,
-or test fixtures.
+automation. Secrets never appear in URLs, output, debug logs, errors, snapshots, or test fixtures.
+The generic API layer provides `--secret-param NAME=ENV_VAR` so passwords, transfer codes, CSRs, and
+payment credentials do not need to appear in process arguments.

@@ -6,11 +6,12 @@
 **Namecheap at command speed.**
 
 Cheep is a safe, unofficial Namecheap CLI with friendly output for people and stable JSON for AI
-agents, scripts, and CI. Check a shortlist of domains, inspect exact account prices, list your
-portfolio, and plan DNS changes without opening the dashboard.
+agents, scripts, and CI. Check domains, inspect account prices, manage DNS through reviewed plans,
+or call any method in Namecheap's official API catalog without opening the dashboard.
 
 [Website](https://cheep.sh) · [Authentication](docs/AUTHENTICATION.md) ·
-[Automation contract](docs/AUTOMATION.md) · [Safety model](docs/SAFETY.md)
+[Complete API access](docs/API.md) · [Automation contract](docs/AUTOMATION.md) ·
+[Safety model](docs/SAFETY.md)
 
 Cheep is independent. It is not affiliated with or endorsed by Namecheap.
 
@@ -92,6 +93,8 @@ Useful agent discovery commands:
 
 ```bash
 cheep schema --json
+cheep api methods --json
+cheep api describe domains/renew --json
 cheep --help
 cheep domains check --help
 ```
@@ -111,6 +114,8 @@ behavior.
 | List TLD capabilities | `cheep tlds list` |
 | Export a DNS zone | `cheep dns export example.com --file zone.yaml` |
 | Preview a desired DNS zone | `cheep dns plan example.com --file zone.yaml` |
+| List every supported Namecheap method | `cheep api methods` |
+| Call any official API method | `cheep api domains get-contacts -p DomainName=example.com` |
 | Inspect the command inventory | `cheep schema --json` |
 
 Run `cheep <command> --help` for the complete flags and arguments.
@@ -124,16 +129,18 @@ Run `cheep <command> --help` for the complete flags and arguments.
 - `--no-input` prevents hidden interactive prompts in automation.
 - Each command has a bounded timeout.
 - DNS uses export, plan, apply, and restore instead of individual blind edits.
-- Future charge-bearing commands must enforce an explicit spending cap.
+- Generic mutations require `--yes`; production mutations also require `--production`.
+- Charge-bearing API methods additionally require `--accept-charge` after a current price check.
 
-Read [DNS workflows](docs/DNS.md) and the [safety contract](docs/SAFETY.md) before applying a
-mutation.
+Read [complete API access](docs/API.md), [DNS workflows](docs/DNS.md), and the
+[safety contract](docs/SAFETY.md) before applying a mutation.
 
 ## Current status
 
-Cheep is in active development. Authentication, read-only account and domain inspection, exact
-pricing, TLD inspection, and guarded whole-zone DNS workflows are implemented. Domain registration
-and other charge-bearing mutations are not available yet.
+Cheep is in active development. Its purpose-built commands cover authentication, account and domain
+inspection, exact pricing, TLD inspection, and guarded whole-zone DNS workflows. The `cheep api`
+surface provides named access to every method in Namecheap's official API catalog, including domain
+registration, renewal, transfers, SSL, users, addresses, and domain privacy.
 
 The website is deployed separately. Its code and assets are never included in CLI release archives
 or Homebrew installations.

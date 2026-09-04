@@ -61,10 +61,51 @@ type DNS interface {
 	ApplyZone(context.Context, Zone, string) (ZoneChange, error)
 }
 
+// API exposes the complete Namecheap method catalog through a stable generic
+// XML tree. Higher-level commands can continue to provide purpose-built models
+// while advanced users and agents retain access to every official operation.
+type API interface {
+	CallAPI(context.Context, APICall) (APIResponse, error)
+}
+
 // Service is the provider surface available to the command layer.
 type Service interface {
 	Reader
 	DNS
+}
+
+// APICall describes one authenticated Namecheap API request. Params contains
+// method-specific fields only. Authentication fields and Command are supplied
+// by the provider implementation.
+type APICall struct {
+	Method   string
+	Params   map[string]string
+	Mutation bool
+}
+
+// APIResponse is the provider-neutral representation of a Namecheap XML
+// response. The element tree preserves names, attributes, text, and order.
+type APIResponse struct {
+	Method           string       `json:"method"`
+	Status           string       `json:"status"`
+	RequestedCommand string       `json:"requested_command,omitempty"`
+	Warnings         []APIMessage `json:"warnings,omitempty"`
+	Response         XMLElement   `json:"response"`
+	ExecutionTime    string       `json:"execution_time,omitempty"`
+}
+
+type APIMessage struct {
+	Number  string `json:"number,omitempty"`
+	Message string `json:"message"`
+}
+
+// XMLElement is an unambiguous JSON representation of arbitrary XML returned
+// by Namecheap methods that do not yet have a purpose-built Cheep model.
+type XMLElement struct {
+	Name       string            `json:"name"`
+	Attributes map[string]string `json:"attributes,omitempty"`
+	Text       string            `json:"text,omitempty"`
+	Children   []XMLElement      `json:"children,omitempty"`
 }
 
 type Probe struct {
