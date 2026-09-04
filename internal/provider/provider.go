@@ -78,9 +78,11 @@ type Service interface {
 // method-specific fields only. Authentication fields and Command are supplied
 // by the provider implementation.
 type APICall struct {
-	Method   string
-	Params   map[string]string
-	Mutation bool
+	// SecretParams preserves explicit --secret-param names for error redaction.
+	SecretParams []string
+	Method       string
+	Params       map[string]string
+	Mutation     bool
 }
 
 // APIResponse is the provider-neutral representation of a Namecheap XML

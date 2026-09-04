@@ -31,7 +31,7 @@ func (c *Client) CallAPI(ctx context.Context, call provider.APICall) (provider.A
 	var root genericXMLNode
 	if _, err := client.DoXMLWithContext(ctx, body, &root); err != nil {
 		converted := c.convertError(err)
-		converted = redactGenericCallError(converted, call.Params)
+		converted = redactGenericCallError(converted, call.Params, call.SecretParams)
 		if call.Mutation && !isDefiniteMutationFailure(err) {
 			return provider.APIResponse{}, &provider.Error{
 				Kind:    provider.ErrorOutcomeUnknown,
@@ -43,8 +43,11 @@ func (c *Client) CallAPI(ctx context.Context, call provider.APICall) (provider.A
 	}
 
 	commandResponse := root.child("CommandResponse")
-	if commandResponse == nil {
-		return provider.APIResponse{}, responseError("API call returned no CommandResponse")
+	if commandResponse == nil || len(commandResponse.Children) == 0 {
+		if call.Mutation {
+			return provider.APIResponse{}, c.outcomeUnknown("API mutation returned an empty or missing CommandResponse; inspect the live state before retrying", nil)
+		}
+		return provider.APIResponse{}, responseError("API call returned an empty or missing CommandResponse")
 	}
 	result := provider.APIResponse{
 		Method:           method,
@@ -145,14 +148,21 @@ func (n genericXMLNode) providerElement() provider.XMLElement {
 	return element
 }
 
-func redactGenericCallError(err error, params map[string]string) error {
+func redactGenericCallError(err error, params map[string]string, explicitSecrets []string) error {
 	providerError, ok := err.(*provider.Error)
 	if !ok {
 		return err
 	}
 	message := providerError.Message
 	for key, value := range params {
-		if value == "" || !sensitiveAPIParameter(key) {
+		sensitive := sensitiveAPIParameter(key)
+		for _, name := range explicitSecrets {
+			if strings.EqualFold(name, key) {
+				sensitive = true
+				break
+			}
+		}
+		if value == "" || !sensitive {
 			continue
 		}
 		message = strings.ReplaceAll(message, value, "[REDACTED]")

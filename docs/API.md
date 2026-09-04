@@ -129,3 +129,12 @@ cheep api call domains/get-info --param DomainName=example.com
 ```
 
 `api call` is still catalog-bound. A misspelled or unknown method fails before any network request.
+
+## Parameter validation and dry-run scope
+
+Parameter files must contain one JSON object, at most 1 MiB and 256 parameters. Duplicate names,
+including names that differ only by case, are rejected rather than silently overwritten.
+
+`--dry-run` suppresses mutations. Read-only API methods still execute and report `dry_run: false`
+and `executed: true`; their response is shown normally. Explicit `--secret-param` values are
+redacted from provider errors even when the parameter name is not a recognized secret name.

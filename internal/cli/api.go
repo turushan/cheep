@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"bufio"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,6 +21,7 @@ import (
 )
 
 const maximumAPIParameters = 256
+const maximumAPIParamsFileBytes = 1024 * 1024
 
 var apiParameterNamePattern = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9]*$`)
 
@@ -183,7 +184,7 @@ func runAPIMethod(command *cobra.Command, state *state, method apicatalog.Method
 		Documentation: method.Documentation,
 		Mutation:      method.Mutation,
 		ChargeBearing: method.ChargeBearing,
-		DryRun:        state.dryRun,
+		DryRun:        state.dryRun && method.Mutation,
 	}
 
 	if method.Mutation {
@@ -207,7 +208,11 @@ func runAPIMethod(command *cobra.Command, state *state, method apicatalog.Method
 
 	ctx, cancel := state.commandContext(command.Context())
 	defer cancel()
-	response, err := api.CallAPI(ctx, provider.APICall{Method: method.Name, Params: params, Mutation: method.Mutation})
+	secrets := make([]string, 0, len(secretNames))
+	for name := range secretNames {
+		secrets = append(secrets, name)
+	}
+	response, err := api.CallAPI(ctx, provider.APICall{Method: method.Name, Params: params, Mutation: method.Mutation, SecretParams: secrets})
 	if err != nil {
 		var providerError *provider.Error
 		if errors.As(err, &providerError) && providerError.Kind == provider.ErrorOutcomeUnknown {
@@ -299,29 +304,55 @@ func readAPIParamsFile(path string, stdin io.Reader) (map[string]string, error) 
 		}()
 		reader = file
 	}
-	decoder := json.NewDecoder(bufio.NewReader(reader))
-	decoder.UseNumber()
-	var raw map[string]any
-	if err := decoder.Decode(&raw); err != nil {
-		return nil, failure.Wrap("invalid_params_file", exitcode.Usage, "parameters file must contain one JSON object", err)
+	content, err := io.ReadAll(io.LimitReader(reader, maximumAPIParamsFileBytes+1))
+	if err != nil {
+		return nil, failure.Wrap("params_file_read_failed", exitcode.Usage, "could not read parameters file", err)
 	}
-	if decoder.Decode(&struct{}{}) != io.EOF {
+	if len(content) > maximumAPIParamsFileBytes {
+		return nil, failure.New("invalid_params_file", exitcode.Usage, "parameters file exceeds 1 MiB")
+	}
+	decoder := json.NewDecoder(bytes.NewReader(content))
+	decoder.UseNumber()
+	start, err := decoder.Token()
+	if err != nil || start != json.Delim('{') {
 		return nil, failure.New("invalid_params_file", exitcode.Usage, "parameters file must contain one JSON object")
 	}
-	params := make(map[string]string, len(raw))
-	for key, value := range raw {
+	params := make(map[string]string)
+	for decoder.More() {
+		token, err := decoder.Token()
+		if err != nil {
+			return nil, failure.New("invalid_params_file", exitcode.Usage, "parameters file contains an invalid property")
+		}
+		key, ok := token.(string)
+		if !ok {
+			return nil, failure.New("invalid_params_file", exitcode.Usage, "parameter names must be strings")
+		}
+		var value any
+		if err := decoder.Decode(&value); err != nil {
+			return nil, failure.New("invalid_params_file", exitcode.Usage, "parameters file contains an invalid value")
+		}
+		var parameter string
 		switch typed := value.(type) {
 		case string:
-			params[key] = typed
+			parameter = typed
 		case json.Number:
-			params[key] = typed.String()
+			parameter = typed.String()
 		case bool:
-			params[key] = fmt.Sprint(typed)
+			parameter = fmt.Sprint(typed)
 		case nil:
-			params[key] = ""
+			parameter = ""
 		default:
 			return nil, failure.New("invalid_params_file", exitcode.Usage, fmt.Sprintf("parameter %s must be a string, number, boolean, or null", key))
 		}
+		if err := addAPIParameter(params, key, parameter); err != nil {
+			return nil, err
+		}
+	}
+	if end, err := decoder.Token(); err != nil || end != json.Delim('}') {
+		return nil, failure.New("invalid_params_file", exitcode.Usage, "parameters file must contain one complete JSON object")
+	}
+	if decoder.Decode(&struct{}{}) != io.EOF {
+		return nil, failure.New("invalid_params_file", exitcode.Usage, "parameters file must contain one JSON object")
 	}
 	return params, nil
 }
@@ -347,6 +378,9 @@ func addAPIParameter(params map[string]string, key, value string) error {
 		if strings.EqualFold(existing, key) {
 			return failure.New("duplicate_parameter", exitcode.Usage, fmt.Sprintf("parameter %s was provided more than once", key))
 		}
+	}
+	if len(params) >= maximumAPIParameters {
+		return failure.New("too_many_parameters", exitcode.Usage, fmt.Sprintf("API calls support at most %d parameters", maximumAPIParameters))
 	}
 	params[key] = value
 	return nil

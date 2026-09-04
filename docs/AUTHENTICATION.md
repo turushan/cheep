@@ -54,6 +54,39 @@ CHEEP_CONFIG
 
 Compatible `NAMECHEAP_*` variables are also recognized. `CHEEP_*` takes precedence.
 
+## Headless environments
+
+Set the following values in your CI system's environment or secret store:
+
+| Variable | Value |
+|---|---|
+| `CHEEP_API_USER` | API-enabled Namecheap username |
+| `CHEEP_API_KEY` | Secret API key from the same environment |
+| `CHEEP_CLIENT_IP` | Whitelisted public IPv4 of the runner |
+| `CHEEP_ENVIRONMENT` | `sandbox` or `production` |
+
+Use a runner with a stable outbound IPv4. Sandbox credentials do not work against production,
+and production credentials do not work against the sandbox. Avoid printing the environment in
+logs or enabling shell tracing around secrets.
+
+```bash
+cheep --json --no-input --readonly doctor
+cheep --json --no-input --readonly domains check example.com
+```
+
+## Config location
+
+Use `CHEEP_CONFIG` to select a specific config file. Otherwise Cheep uses
+the operating system's user configuration directory:
+
+| Platform | Default location |
+|---|---|
+| macOS | `~/Library/Application Support/cheep/config.toml` |
+| Linux | `$XDG_CONFIG_HOME/cheep/config.toml`, or `~/.config/cheep/config.toml` |
+| Windows | `%AppData%\cheep\config.toml` |
+
+Run `cheep auth status` to see the resolved path and non-secret profile.
+
 ## Sources
 
 - [Namecheap API introduction](https://www.namecheap.com/support/api/intro/)

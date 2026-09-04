@@ -161,3 +161,51 @@ func TestAPIRefusesCredentialAndCommandOverrides(t *testing.T) {
 		}
 	}
 }
+
+func TestAPIReadDryRunReportsExecutedResponse(t *testing.T) {
+	t.Parallel()
+	for _, jsonMode := range []bool{false, true} {
+		service := &fakeAPIService{fakeReader: &fakeReader{}, response: provider.APIResponse{Status: "OK"}}
+		options, stdout, stderr := authenticatedOptions(t, service)
+		args := []string{"--dry-run", "api", "domains", "get-info", "-p", "DomainName=example.com"}
+		if jsonMode {
+			args = append(args, "--json")
+		}
+		if status := Execute(args, options); status != exitcode.Success || service.calls != 1 {
+			t.Fatalf("read was not executed: %d, %s", status, stderr.String())
+		}
+		if strings.Contains(stdout.String(), "was not sent") || !strings.Contains(stdout.String(), `"status":`) {
+			t.Fatalf("read output misrepresents execution: %s", stdout.String())
+		}
+		if jsonMode && (!strings.Contains(stdout.String(), `"dry_run":false`) || !strings.Contains(stdout.String(), `"executed":true`)) {
+			t.Fatalf("incorrect execution metadata: %s", stdout.String())
+		}
+	}
+}
+
+func TestAPIExplicitSecretNamesReachProvider(t *testing.T) {
+	t.Parallel()
+	service := &fakeAPIService{fakeReader: &fakeReader{}}
+	options, _, stderr := authenticatedOptions(t, service)
+	status := Execute([]string{"api", "domains", "get-info", "--secret-param", "DomainName=CHEEP_API_KEY"}, options)
+	if status != exitcode.Success || len(service.request.SecretParams) != 1 || service.request.SecretParams[0] != "domainname" {
+		t.Fatalf("secret metadata lost: %+v; %s", service.request, stderr.String())
+	}
+}
+
+func TestAPIParametersFileRejectsAmbiguousAndUnboundedInput(t *testing.T) {
+	t.Parallel()
+	for _, input := range []string{
+		`null`, `[]`, `{"Years":1,"Years":10}`, `{"Years":1,"years":10}`,
+		`{"Years":1} {}`, `{"Years":1`, `{"Years":[1]}`, `{"ApiKey":"override"}`,
+		`{"Notes":"` + strings.Repeat("x", maximumAPIParamsFileBytes) + `"}`,
+	} {
+		if _, err := readAPIParamsFile("-", strings.NewReader(input)); err == nil {
+			t.Fatalf("accepted invalid parameter document (%d bytes)", len(input))
+		}
+	}
+	params, err := readAPIParamsFile("-", strings.NewReader(`{"Years":2,"Enabled":true,"Coupon":null,"DomainName":"example.com","Amount":1.25}`))
+	if err != nil || params["Years"] != "2" || params["Enabled"] != "true" || params["Coupon"] != "" || params["Amount"] != "1.25" {
+		t.Fatalf("scalar conversion failed: %#v, %v", params, err)
+	}
+}

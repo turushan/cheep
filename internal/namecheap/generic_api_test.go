@@ -82,3 +82,39 @@ func TestCallAPIRedactsSecretFromProviderError(t *testing.T) {
 		t.Fatalf("secret was not redacted: %v", err)
 	}
 }
+
+func TestCallAPIMissingResponseClassifiesMutationAsUnknown(t *testing.T) {
+	t.Parallel()
+	for _, mutation := range []bool{false, true} {
+		for _, body := range []string{`<ExecutionTime>0.123</ExecutionTime>`, `<CommandResponse Type="namecheap.domains.renew"/>`} {
+			calls := 0
+			client := testClient(roundTripFunc(func(*http.Request) (*http.Response, error) {
+				calls++
+				return xmlResponse(body), nil
+			}), config.Sandbox, "test-key")
+			_, err := client.CallAPI(context.Background(), provider.APICall{Method: "namecheap.domains.renew", Mutation: mutation})
+			want := provider.ErrorProvider
+			if mutation {
+				want = provider.ErrorOutcomeUnknown
+			}
+			var problem *provider.Error
+			if !errors.As(err, &problem) || problem.Kind != want || calls != 1 {
+				t.Fatalf("mutation=%t: %v, calls=%d", mutation, err, calls)
+			}
+		}
+	}
+}
+
+func TestCallAPIRedactsExplicitSecretWithUnrecognizedName(t *testing.T) {
+	t.Parallel()
+	const secret = "private-customer-token"
+	client := testClient(roundTripFunc(func(*http.Request) (*http.Response, error) {
+		return xmlResponse(`<Errors><Error Number="2010404">Invalid token ` + secret + `</Error></Errors><CommandResponse/>`), nil
+	}), config.Sandbox, "test-key")
+	_, err := client.CallAPI(context.Background(), provider.APICall{
+		Method: "namecheap.users.login", Params: map[string]string{"Token": secret}, SecretParams: []string{"token"},
+	})
+	if err == nil || strings.Contains(err.Error(), secret) || !strings.Contains(err.Error(), "[REDACTED]") {
+		t.Fatalf("explicit secret exposed: %v", err)
+	}
+}
