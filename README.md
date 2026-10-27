@@ -17,13 +17,21 @@ Cheep is independent. It is not affiliated with or endorsed by Namecheap.
 
 ## Install
 
-Go 1.26.6 or newer is currently required. Prebuilt binaries and Homebrew follow the first tagged
-release.
+With Homebrew on macOS or Linux:
+
+```bash
+brew install turushan/tap/cheep
+cheep version
+```
+
+With Go 1.26.6 or newer:
 
 ```bash
 go install github.com/turushan/cheep/cmd/cheep@latest
-cheep version
 ```
+
+Prebuilt archives for macOS, Linux, and Windows, with checksums, are on the
+[releases page](https://github.com/turushan/cheep/releases/latest).
 
 ## Check your first domain
 
