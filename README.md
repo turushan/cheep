@@ -24,7 +24,7 @@ brew install turushan/tap/cheep
 cheep version
 ```
 
-With Go 1.26.6 or newer:
+With Go 1.26.10 or newer:
 
 ```bash
 go install github.com/turushan/cheep/cmd/cheep@latest
