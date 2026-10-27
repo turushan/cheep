@@ -33,8 +33,9 @@ The environment must resolve to `sandbox` or `production`. An absent environment
 
 ## Output
 
-Human-readable output is the default. `--json` emits one versioned JSON document to stdout. Data
-uses stdout. Diagnostics and errors use stderr. See [AUTOMATION.md](AUTOMATION.md).
+Human-readable output is the default. `--json` emits one versioned JSON document, to stdout on
+success and to stderr on failure. Data uses stdout. Diagnostics and errors use stderr. See
+[AUTOMATION.md](AUTOMATION.md).
 
 ## Release
 

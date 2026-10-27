@@ -102,15 +102,25 @@ stable JSON element tree instead of guessing field types:
 
 ```json
 {
-  "method": "namecheap.domains.getContacts",
+  "method": "namecheap.domains.getRegistrarLock",
   "status": "OK",
+  "requested_command": "namecheap.domains.getregistrarlock",
   "response": {
     "name": "CommandResponse",
     "attributes": {
-      "Type": "namecheap.domains.getContacts"
+      "Type": "namecheap.domains.getRegistrarLock"
     },
-    "children": []
-  }
+    "children": [
+      {
+        "name": "DomainGetRegistrarLockResult",
+        "attributes": {
+          "Domain": "example.com",
+          "RegistrarLockStatus": "true"
+        }
+      }
+    ]
+  },
+  "execution_time": "0.5"
 }
 ```
 

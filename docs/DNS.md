@@ -20,14 +20,14 @@ domain: example.com
 email_type: NONE
 namecheap_dns: true
 records:
-  - host: "@"
-    type: A
-    value: 192.0.2.10
-    ttl: 300
-  - host: www
-    type: CNAME
-    value: example.com
-    ttl: 300
+    - host: '@'
+      type: A
+      value: 192.0.2.10
+      ttl: 300
+    - host: www
+      type: CNAME
+      value: example.com
+      ttl: 300
 ```
 
 ## Plan
@@ -36,14 +36,18 @@ records:
 cheep --profile sandbox dns plan example.com --file example.com.yaml
 ```
 
-Planning performs one or more read-only requests. It prints records to add, remove, and keep. It
-does not write to Namecheap.
+Planning performs one or more read-only requests. It prints the records to add and remove. Kept
+records appear only as the `=N` count on its `Changes: +N -N =N` line; `--json` lists them under
+`keep`. It does not write to Namecheap.
 
 The same safety path is available through apply dry-run mode:
 
 ```bash
 cheep --profile sandbox --dry-run dns apply example.com --file example.com.yaml
 ```
+
+A dry run prints `DRY RUN` above the same plan. Like `dns plan`, it reads the live zone and writes
+nothing. `--readonly` allows it.
 
 ## Apply
 
@@ -70,9 +74,9 @@ read and `setHosts`. If the response or verification is inconclusive, Cheep retu
 `dns_outcome_unknown` error. Do not retry it blindly. Run `cheep dns list`, inspect the named
 snapshot, and reconcile the actual zone first.
 
-An empty desired zone also requires `--allow-empty-zone`. `--readonly` blocks every apply. CAA
-writes and OX or GMAIL mail zones remain disabled until their round-trip behavior is modeled and
-verified.
+An empty desired zone also requires `--allow-empty-zone`. `--readonly` blocks every apply except a
+`--dry-run`. CAA writes and OX or GMAIL mail zones remain disabled until their round-trip behavior
+is modeled and verified.
 
 Changing `email_type` requires a second exact gate such as `--confirm-email-type MX`. Every
 production DNS mutation also requires `--production`, even when a production profile or an

@@ -59,9 +59,9 @@ cheep domains check paperkite.dev paperkite.com
 Human output stays compact:
 
 ```text
-DOMAIN          AVAILABLE  PREMIUM  PREMIUM REGISTRATION
-paperkite.dev   yes        no
-paperkite.com   no         no
+DOMAIN         AVAILABLE  PREMIUM  PREMIUM REGISTRATION
+paperkite.dev  yes        no       0.00
+paperkite.com  no         no       0.00
 ```
 
 The names and results above are illustrative. Cheep always asks Namecheap for the live answer.
@@ -84,7 +84,13 @@ cheep --json --no-input --readonly domains check paperkite.dev
     {
       "domain": "paperkite.dev",
       "available": true,
-      "premium": false
+      "premium": false,
+      "premium_registration_price": 0,
+      "premium_renewal_price": 0,
+      "premium_restore_price": 0,
+      "premium_transfer_price": 0,
+      "icann_fee": 0,
+      "eap_fee": 0
     }
   ],
   "meta": {
@@ -93,6 +99,8 @@ cheep --json --no-input --readonly domains check paperkite.dev
   }
 }
 ```
+
+Cheep prints the envelope on one line. It is indented here for reading.
 
 For headless environments, set `CHEEP_API_USER`, `CHEEP_API_KEY`, `CHEEP_CLIENT_IP`, and
 `CHEEP_ENVIRONMENT`. Never put an API key in a command argument.
